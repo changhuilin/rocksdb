@@ -13,13 +13,15 @@ using namespace rocksdb;
 
 int main(int argc, char** argv) {
     if(argc != 3) {
-        printf("argc = %d\n", argc);
         printf("./sst_dump <sst_file_name> <dump_file_name>\n");
         exit(1);
     }
 
-    SstFileReader sst_reader(argv[1], true, true);
-    sst_reader.DumpTable(argv[2]);
+    std::string sst_file(argv[1]);
+    SstFileReader sst_reader(sst_file, true, true);
+
+    std::string output_file(argv[2]);
+    sst_reader.DumpTable(output_file);
 
     return 0; 
 }
