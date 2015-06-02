@@ -22,6 +22,7 @@
 
 /**
  *  Number of key-value pairs
+ *  (unsigned)
  *
  *  For each pair
  *    1. (8-byte) Length of key
@@ -123,6 +124,7 @@ void mmap_read(const char *input_file) {
   void* ptr;
   struct stat statbuf;
 
+  /* open the target file */
   if ((fdin = open (input_file, O_RDONLY)) < 0) {
     PERR("can't open %s for reading", input_file);
     assert(false);
@@ -191,7 +193,7 @@ void ifstream_read(const char *input_file, unsigned total_len) {
   p_read += sizeof(unsigned);
   PINF("%u key-value pairs in total", num_pairs);
 
-  for(unsigned idx = 0; idx < NUM_PAIRS; idx++) {
+  for(unsigned idx = 0; idx < num_pairs; idx++) {
 
     uint8_t len;
     char key[1024], val[1024];

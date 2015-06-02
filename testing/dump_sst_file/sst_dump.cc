@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     }
 
     std::string sst_file(argv[1]);
-    SstFileReader sst_reader(sst_file, true, true);
+    SstFileReader sst_reader(sst_file, false, false);
 
     std::string output_file(argv[2]);
     sst_reader.DumpTable(output_file);
