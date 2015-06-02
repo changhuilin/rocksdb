@@ -29,20 +29,20 @@ int main() {
   assert(s.ok());
 
   // Put key-value
-  s = db->Put(WriteOptions(), "key1", "value");
+  s = db->Put(WriteOptions(), "keykeykey1", "value");
   assert(s.ok());
   std::string value;
   // get value
-  s = db->Get(ReadOptions(), "key1", &value);
+  s = db->Get(ReadOptions(), "keykeykey1", &value);
   assert(s.ok());
   assert(value == "value");
 
-#define NUM_KEYS 1000000
+#define NUM_KEYS 500000
   for(unsigned idx = 0; idx < NUM_KEYS; idx++)
   {
       std::stringstream ss_key, ss_val;
-      ss_key << "key-" << idx;
-      ss_val << "val-" << idx;
+      ss_key << "key-tt-" << idx;
+      ss_val << "val-tt-" << idx;
 
       //std::cout << ss_key.str() << " : " << ss_val.str() << std::endl;
       s = db->Put(WriteOptions(), ss_key.str(), ss_val.str());
