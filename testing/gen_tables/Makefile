@@ -1,6 +1,6 @@
 
 all:
-	g++ --std=gnu++11 -g -Wall gen_files.cc -o gen_files.o
+	g++ --std=gnu++11 -g -Wall gen_tables.cc -o gen_tables.o
 
 
 clean:
