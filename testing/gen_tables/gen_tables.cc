@@ -257,7 +257,8 @@ int compare(std::string a_str, std::string b_str) {
 int main(int argc, char *argv[]) {
 
   if(argc != 3) {
-    PERR("\nUSAGE: ./gen_files <w> <num_files> \n       ./gen_files <r> <file_name>");
+    printf("[USAGE]: ./gen_files <w> <num_files>\n");
+    printf("         ./gen_files <r> <file_name>\n");
     exit(1);
   } 
   
