@@ -78,14 +78,20 @@ void parse_kv(char* ptr, void** key, size_t* key_len, size_t* total_len) {
 // main function
 int main(int argc, char *argv[]) {
 
-  if(argc < 3) {
+  if(argc < 2) {
     printf("[USAGE]: ./merge_sort <num_files> <file1> ... \n");
+    printf("         ./merge_sort <num_files>\n");
     exit(1);
   }
 
   unsigned num_files = atoi(argv[1]);
   printf("argc = %d, num_files = %u\n", argc, num_files);
-  assert(argc == (int)(2 + num_files));
+
+  if(!(argc == (int)(2 + num_files) || argc == 2)) {
+    printf("[USAGE]: ./merge_sort <num_files> <file1> ... \n");
+    printf("         ./merge_sort <num_files>\n");
+    exit(1);
+  }
 
   unsigned total_num_pairs = 0;
 
@@ -100,8 +106,19 @@ int main(int argc, char *argv[]) {
   PLOG("tsc_per_sec = %lu", tsc_per_sec);
 
   for(unsigned file_idx = 0; file_idx < num_files; file_idx++) {
-    if ((fdin[file_idx] = open (argv[2+file_idx], O_RDONLY)) < 0) {
-      PERR("can't open %s for reading", argv[2+file_idx]);
+
+    char file_name[1024];
+
+    if(argc==2) {
+      std::stringstream ss;
+      ss << "table-" << file_idx << ".txt";
+      strcpy(file_name, ss.str().c_str());
+    } else {
+      strcpy(file_name, argv[2+file_idx]);
+    }
+
+    if ((fdin[file_idx] = open(file_name, O_RDONLY)) < 0) {
+      PERR("can't open %s for reading", file_name);
       assert(false);
     }
 
@@ -216,7 +233,7 @@ int main(int argc, char *argv[]) {
 
   double tsc_secs = (end_tsc - start_tsc)*1.0 / tsc_per_sec;
 
-  printf("%u key-value pairs in %2f sec\n", total_num_pairs, tsc_secs);
+  printf("\n** (Merge Sort) %u key-value pairs in %2f sec\n", total_num_pairs, tsc_secs);
 
 
 
