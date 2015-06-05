@@ -17,7 +17,10 @@
 #include "logging.h"
 
 
-#define NUM_PAIRS (1024*8)
+#define NUM_PAIRS (1024*64*4)
+#define KEY_LEN (16)
+#define VAL_LEN (32)
+
 #define DEBUG_VERBOSE
 
 /**
@@ -57,7 +60,7 @@ void write_tables(unsigned num_files) {
   }
 
   //Write to files
-  unsigned base = 10000000;
+  unsigned base = 100000000;
 
   std::default_random_engine generator;
   std::uniform_int_distribution<unsigned> distribution(0,num_files-1);
@@ -77,6 +80,13 @@ void write_tables(unsigned num_files) {
     ss_key << "key-" << index;
     key_len = ss_key.str().size();
 
+    //padding
+    if(key_len < (unsigned)KEY_LEN) {
+      for(unsigned i = 0; i < (unsigned)KEY_LEN - key_len; i++)
+        ss_key << "0";
+      key_len = ss_key.str().size();
+    }
+
     memcpy(p, &key_len, sizeof(uint8_t));
     memcpy(p+1, ss_key.str().c_str(), key_len);
 
@@ -87,6 +97,13 @@ void write_tables(unsigned num_files) {
     std::stringstream ss_val;
     ss_val << "val-" << index;
     val_len = ss_val.str().size();
+
+    //padding
+    if(val_len < (unsigned)VAL_LEN) {
+      for(unsigned i = 0; i < (unsigned)VAL_LEN - val_len; i++)
+        ss_val << "0";
+      val_len = ss_val.str().size();
+    }
 
     memcpy(p, &val_len, sizeof(uint8_t));
     memcpy(p+1, ss_val.str().c_str(), val_len);
@@ -158,9 +175,7 @@ void mmap_read(const char *input_file) {
 
     memcpy(key, p_read+1, len);
     key[len] = '\0';
-#ifdef DEBUG_VERBOSE
     printf("key = %s (len = %u) : ", key, len);
-#endif
 
     p_read += (1+len);
 
@@ -168,9 +183,7 @@ void mmap_read(const char *input_file) {
 
     memcpy(val, p_read+1, len);
     val[len] = '\0';
-#ifdef DEBUG_VERBOSE
     printf("val = %s (len = %u)\n", val, len);
-#endif
 
     p_read += (1+len);
   }
@@ -202,9 +215,7 @@ void ifstream_read(const char *input_file, unsigned total_len) {
 
     memcpy(key, p_read+1, len);
     key[len] = '\0';
-#ifdef DEBUG_VERBOSE
     printf("key = %s (len = %u) : ", key, len);
-#endif
 
     p_read += (1+len);
 
@@ -212,9 +223,7 @@ void ifstream_read(const char *input_file, unsigned total_len) {
 
     memcpy(val, p_read+1, len);
     val[len] = '\0';
-#ifdef DEBUG_VERBOSE
     printf("val = %s (len = %u)\n", val, len);
-#endif
 
     p_read += (1+len);
   }
@@ -275,6 +284,7 @@ int main(int argc, char *argv[]) {
 #define MMAP_READ 1
     char input_file[32];
     strcpy(input_file, argv[2]);
+
 #if (IFSTREAM_READ==1) 
     ifstream_read(input_file, 1024);
 #elif (MMAP_READ==1)
